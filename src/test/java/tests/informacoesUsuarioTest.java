@@ -17,7 +17,7 @@ public class informacoesUsuarioTest {
     private WebDriver navegador;
 
     @Before
-    public void setUp() {                              
+    public void setUp() {
         //open browser
         System.setProperty("webdriver.chrome.driver", "C:\\Users\\guilh\\Drivers\\chromedriver.exe");
         navegador = new ChromeDriver();
