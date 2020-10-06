@@ -1,10 +1,14 @@
 package tests;
 
+import org.easetech.easytest.annotation.DataLoader;
+import org.easetech.easytest.annotation.Param;
+import org.easetech.easytest.runner.DataDrivenTestRunner;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
+import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -19,7 +23,9 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 
-public class informacoesUsuarioTest {
+@RunWith(DataDrivenTestRunner.class)
+@DataLoader(filePaths = "informacoesUsuarioTestDados.csv")
+public class InformacoesUsuarioTest {
     private WebDriver navegador;
 
     @Rule
@@ -27,13 +33,6 @@ public class informacoesUsuarioTest {
 
     @Before
     public void setUp() {
-        //open browser
-        System.setProperty("webdriver.chrome.driver", "C:\\Users\\guilh\\Drivers\\chromedriver.exe");
-        navegador = new ChromeDriver();
-        navegador.manage().window().maximize();
-        navegador.manage().timeouts().implicitlyWait(1000, TimeUnit.SECONDS);
-        //going to the page
-        navegador.get("http://www.juliodelima.com.br/taskit");
 
         //Clicar no link que possui o texto "SingIn"
         navegador.findElement(By.linkText("Sign in")).click();
@@ -56,8 +55,8 @@ public class informacoesUsuarioTest {
         //Clicar em um link que possui o texto "MORE DATA ABOUT YOU"
         navegador.findElement(By.linkText("MORE DATA ABOUT YOU")).click();
     }
-    //@Test
-    public void testAdicionarUmaInformacaoDoUsuario() {
+    @Test
+    public void testAdicionarUmaInformacaoDoUsuario(@Param(name="tipo")String tipo, @Param(name="contato")String contato, @Param(name="mensagem")String mensagemEsperada) {
 
         //Clicar no botao atraves do xpath "//button[@data-target="addmoredata"]
         navegador.findElement(By.xpath("//button[@data-target='addmoredata']")).click();
@@ -67,10 +66,10 @@ public class informacoesUsuarioTest {
 
         //Na combo de name "type" escolher a opção "Phone"
         WebElement campoType = popupAddMoreData.findElement(By.name("type"));
-        new Select(campoType).selectByVisibleText("Phone");
+        new Select(campoType).selectByVisibleText(tipo);
 
         //No campo de name "contact" digitar "99999-11111"
-        popupAddMoreData.findElement(By.name("contact")).sendKeys("99999-11111");
+        popupAddMoreData.findElement(By.name("contact")).sendKeys(contato);
 
         //Clicar no link de text "SAVE" que esta na popup
         popupAddMoreData.findElement(By.linkText("SAVE")).click();
@@ -78,7 +77,7 @@ public class informacoesUsuarioTest {
         //Na mensagem de id "toast-container" validar que o texto é "Your contact has been added!"
         WebElement mensagemPopup = navegador.findElement(By.id("toast-container"));
         String mensagem = mensagemPopup.getText();
-        assertEquals("Your contact has been added!", mensagem);
+        assertEquals(mensagemEsperada, mensagem);
     }
    @Test
     public void testeRemoverContatoUsuario(){
@@ -104,6 +103,7 @@ public class informacoesUsuarioTest {
        //Fazer Logout
        navegador.findElement(By.linkText("Logout")).click();
     }
+
     @After
     public void tearDown() {
         //Close browser

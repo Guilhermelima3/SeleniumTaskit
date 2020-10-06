@@ -1,0 +1,5 @@
+testAdicionarUmaInformacaoDoUsuario,tipo,contato,mensagem,Duration(ms)
+"",Phone,+55119999-1111,Your contact has been added!,519.0
+"",Phone,+55119999-3333,Your contact has been added!,460.0
+"",E-mail,example@hotmail.com,Your contact has been added!,441.0
+"",E-mail,example@teste.com,Your contact has been added!,445.0
