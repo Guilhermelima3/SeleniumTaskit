@@ -2,12 +2,18 @@ package tests;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import suporte.Generator;
+import suporte.Screenshot;
 
 import java.util.concurrent.TimeUnit;
 
@@ -15,6 +21,9 @@ import static org.junit.Assert.assertEquals;
 
 public class informacoesUsuarioTest {
     private WebDriver navegador;
+
+    @Rule
+    public TestName test = new TestName();
 
     @Before
     public void setUp() {
@@ -25,9 +34,6 @@ public class informacoesUsuarioTest {
         navegador.manage().timeouts().implicitlyWait(1000, TimeUnit.SECONDS);
         //going to the page
         navegador.get("http://www.juliodelima.com.br/taskit");
-    }
-    @Test
-    public void testAdicionarUmaInformacaoDoUsuario() {
 
         //Clicar no link que possui o texto "SingIn"
         navegador.findElement(By.linkText("Sign in")).click();
@@ -49,6 +55,9 @@ public class informacoesUsuarioTest {
 
         //Clicar em um link que possui o texto "MORE DATA ABOUT YOU"
         navegador.findElement(By.linkText("MORE DATA ABOUT YOU")).click();
+    }
+    //@Test
+    public void testAdicionarUmaInformacaoDoUsuario() {
 
         //Clicar no botao atraves do xpath "//button[@data-target="addmoredata"]
         navegador.findElement(By.xpath("//button[@data-target='addmoredata']")).click();
@@ -70,7 +79,30 @@ public class informacoesUsuarioTest {
         WebElement mensagemPopup = navegador.findElement(By.id("toast-container"));
         String mensagem = mensagemPopup.getText();
         assertEquals("Your contact has been added!", mensagem);
+    }
+   @Test
+    public void testeRemoverContatoUsuario(){
+        // Clicar no elemento pelo xpath "//span[text()="99999-11111"]/following-sibling::a"
+       navegador.findElement(By.xpath("//span[text()=\"99999-11111\"]/following-sibling::a")).click();
 
+       // Confirma a janela javascript
+       navegador.switchTo().alert().accept();
+
+       //Validar que a msg apresentada foi  "Rest in peace, dear phone!"
+       WebElement mensagemPopup = navegador.findElement(By.id("toast-container"));
+       String mensagem = mensagemPopup.getText();
+       assertEquals("Rest in peace, dear phone!", mensagem);
+
+       //Screenshot
+       String screenshotArquivo = "\\Users\\guilh\\test-screenshot\\TaskIt\\" + Generator.dataHoraParaArquivo() + test.getMethodName() + ".png";
+       Screenshot.tirar(navegador,screenshotArquivo);
+
+       //Aguardar ate 10 segundos
+       WebDriverWait aguardar = new WebDriverWait(navegador,10);
+       aguardar.until(ExpectedConditions.stalenessOf(mensagemPopup));
+
+       //Fazer Logout
+       navegador.findElement(By.linkText("Logout")).click();
     }
     @After
     public void tearDown() {
